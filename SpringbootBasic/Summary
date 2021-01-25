@@ -1,0 +1,16 @@
+MessageConverter
+- 스프링 프레임워크에서 제공하는 인터페이스
+- RequestBody 에 담긴 내용을 Controller 에서 사용하기 위해 Argument 로 변환할 때 사용
+- ResponseBody 를 작성할 때 사용
+- 관련 어노테이션 : @ResponseBody / @RequestBody
+- @RestController 인 경우, 모든 메소드에 @ResponseBody 부여한것과 같아서 생략 가능하다. 기본적으로 MessageConverter 가 적용 되기 때문이다.
+- Composition 타입일 경우, 기본적으로 JsonMessageConverter 이며 Primitive 타입일 경우, StringMessageConverter 이다.
+- @Controller 인 경우, @ResponseBody 를 생략하면, MessageConverter 가 적용 안됨. 안그러면 ViewNameResolver 를 타서 view 를 찾게 됨.
+
+ViewResolver
+- 스프링 웹 MVC 의 ContentNegotiatingViewResolver 가 어떤 contentType 일 때 어떤 응답을 보내고, accept header 요청에 의해서 해당 요청에 맞는 응답을 보내는 작업을 알아서 해준다.
+
+HttpMediaTypeNotAcceptableException 이란 ?
+- 클라이언트가 요청한 미디어 타입을 처리할 HttpMessageConverter 가 없음
+  ex) Accept header 를 XML 타입으로 설정하고 xpath 를 이용해서 XML 로 받는 응답을 검증 = HttpMediaTypeNotAcceptableException
+      -> XML HttpMessageConverter 가 없으므로, dependency 해줘야함.

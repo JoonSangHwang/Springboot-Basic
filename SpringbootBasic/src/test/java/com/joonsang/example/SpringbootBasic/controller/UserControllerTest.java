@@ -1,7 +1,9 @@
 package com.joonsang.example.SpringbootBasic.controller;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,15 +15,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserControllerTest {
 
     @Autowired
@@ -37,7 +38,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("HttpMessageConverters 테스트")
+    @DisplayName("JSON HttpMessageConverters")
     public void createUser_JSON() throws Exception {
 
         String userJson = "{\"username\":\"joonsang\", \"password\":\"1234\"}";
@@ -50,6 +51,23 @@ class UserControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.username", is(equalTo("joonsang"))))
             .andExpect(jsonPath("$.password", is(equalTo("1234"))))
+        ;
+    }
+
+    @Test
+    @DisplayName("XML HttpMessageConverter")
+    public void createUser_XML() throws Exception {
+
+        String userJson = "{\"username\":\"joonsang\", \"password\":\"1234\"}";
+
+        mockMvc.perform(post("/users/create")
+                .contentType(MediaType.APPLICATION_JSON)        // 클라이언트가 요청에 담아 보내는 데이터(body)의 형식(MediaType)
+                .accept(MediaType.APPLICATION_XML)              // 클라이언트가 서버에 어떤 형식(MediaType)으로 달라는 요청
+                .content(userJson))                             // 내용 ^^
+                .andDo(print())                                 // 실패할 경우 andDo(print()) 가 자동으로 발동. 성공 시, 스킵
+                .andExpect(status().isOk())
+                .andExpect(xpath("/User/username").string("joonsang"))
+                .andExpect(xpath("/User/password").string("1234"))
         ;
     }
 
