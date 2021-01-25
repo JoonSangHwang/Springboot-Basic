@@ -43,10 +43,10 @@ class UserControllerTest {
         String userJson = "{\"username\":\"joonsang\", \"password\":\"1234\"}";
 
         mockMvc.perform(post("/users/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(userJson))
-                .andDo(print())                     // 실패할 경우 andDo(print()) 가 자동으로 발동. 성공 시, 스킵
+                .contentType(MediaType.APPLICATION_JSON)        // 클라이언트가 요청에 담아 보내는 데이터(body)의 형식(MediaType)
+                .accept(MediaType.APPLICATION_JSON)             // 클라이언트가 서버에 어떤 형식(MediaType)으로 달라는 요청
+                .content(userJson))                             // 내용 ^^
+                .andDo(print())                                 // 실패할 경우 andDo(print()) 가 자동으로 발동. 성공 시, 스킵
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.username", is(equalTo("joonsang"))))
             .andExpect(jsonPath("$.password", is(equalTo("1234"))))
