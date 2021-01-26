@@ -35,6 +35,8 @@ dependencies {
 	// 웹JAR : jQuery 버전을 명시적으로 선언하지 않기 위하여 사용
 	compile group: 'org.webjars', name: 'webjars-locator-core', version: '0.36'
 
+	// Hateoas
+	compile group: 'org.springframework.hateoas', name: 'spring-hateoas', version: '1.2.1'
 
 }
 
