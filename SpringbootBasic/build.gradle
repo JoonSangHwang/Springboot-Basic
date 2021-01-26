@@ -27,6 +27,15 @@ dependencies {
 
 	// HttpMessageConverter - XML
 	implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.6')
+
+	// 웹JAR : jQuery & bootstrap
+	compile group: 'org.webjars.bower', name: 'jquery', version: '3.3.1'
+	compile 'org.webjars:bootstrap:4.3.1'
+
+	// 웹JAR : jQuery 버전을 명시적으로 선언하지 않기 위하여 사용
+	compile group: 'org.webjars', name: 'webjars-locator-core', version: '0.36'
+
+
 }
 
 test {

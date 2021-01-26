@@ -10,7 +10,7 @@ public class HelloController {
 
     private Logger logger = LoggerFactory.getLogger(HelloController.class);
 
-    @GetMapping("/")
+    @GetMapping("/h2")
     public String hello() {
 
         logger.trace("Trace Level 테스트");
@@ -19,6 +19,6 @@ public class HelloController {
         logger.warn("Warn Level 테스트");
         logger.error("ERROR Level 테스트");
 
-        return "hello";
+        return "h2";
     }
 }
