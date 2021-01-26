@@ -45,3 +45,8 @@ Hypermedia As The Engine Of Application State
 ObjectMapper 제공
 - Springboot Stater Web 에 들어 있음
 - 리소스를 JSON 으로 변환
+
+
+SOP과 CORS
+● Single-Origin Policy
+● Cross-Origin Resource Sharing
