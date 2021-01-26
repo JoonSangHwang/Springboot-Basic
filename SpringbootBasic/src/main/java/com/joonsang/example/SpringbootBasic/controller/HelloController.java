@@ -1,9 +1,14 @@
 package com.joonsang.example.SpringbootBasic.controller;
 
+import com.joonsang.example.SpringbootBasic.exception.SampleException;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HelloController {
@@ -19,6 +24,20 @@ public class HelloController {
         logger.warn("Warn Level 테스트");
         logger.error("ERROR Level 테스트");
 
-        return "h2";
+        throw new SampleException();
+    }
+
+    @ExceptionHandler(SampleException.class)
+    public @ResponseBody AppError sampleError(SampleException e) {
+        AppError appError = new AppError();
+        appError.setMessage("error.app.key");
+        appError.setReason("IDK IDK");
+        return appError;
+    }
+
+    @Data
+    private class AppError {
+        private String message;
+        private String reason;
     }
 }
