@@ -67,3 +67,8 @@ SOP과 CORS
 
 설정 파일 Value 주의할 점
 1. 테스트 진행 시, Test 밑의 설정파일은 Src 밑의 설정파일을 오버라이딩 한다.
+
+프로파일
+- spring.profiles.active 을 설정하면 @Configuration 에서의 @Profile 정보를 읽고 프로퍼티 설정을 초기화 해준다. 초기화 방법은 다음과 같다.
+1. Program Arguments : --spring.profiles.active=prod
+2. java -jar target /~-SNAPSHOT.jar --spring.profiles.active=prod
