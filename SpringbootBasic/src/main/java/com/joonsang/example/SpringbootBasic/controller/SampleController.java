@@ -1,12 +1,19 @@
 package com.joonsang.example.SpringbootBasic.controller;
 
+import com.joonsang.example.SpringbootBasic.entity.User;
 import com.joonsang.example.SpringbootBasic.init.JoonsangProperties;
 import lombok.Data;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -19,6 +26,9 @@ public class SampleController {
 
     @Autowired
     JoonsangProperties joonsangProperties;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @GetMapping("hateoasTest")
     public EntityModel<Hello> hello() {
@@ -39,6 +49,21 @@ public class SampleController {
         EntityModel<Hello> entityModel = new EntityModel(hello);
         entityModel.add(linkTo(methodOn(SampleController.class).hello()).withSelfRel());
         return entityModel;
+    }
+
+    @GetMapping("restDocsTest")
+    public ResponseEntity hello2(@RequestBody User user) {
+        User u = modelMapper.map(user, User.class);
+
+//        WebMvcLinkBuilder selfLinkBuilder = linkTo(User.class).slash(u.getId());
+//        URI createdUri = selfLinkBuilder.toUri();
+
+//        EntityModel<User> entityModel = new EntityModel(u);
+//        entityModel.add(linkTo(methodOn(User.class)).withSelfRel());
+//        entityModel.add(selfLinkBuilder.withRel("create-restDocsTest"));
+
+
+        return ResponseEntity.ok().body(u);
     }
 
     @Data

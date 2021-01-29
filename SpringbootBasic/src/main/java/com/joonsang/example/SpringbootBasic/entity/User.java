@@ -1,9 +1,15 @@
 package com.joonsang.example.SpringbootBasic.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.*;
 
+import javax.persistence.Entity;
+
+@Entity
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     private Long id;
