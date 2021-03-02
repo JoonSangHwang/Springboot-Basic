@@ -22,9 +22,10 @@ repositories {
 }
 
 ext {
-	// RestDocs - 경로와 파일 지정
+	// Asciidoc 문서인 스니펫이 생성될 경로 지정
 	set('snippetsDir', file("build/generated-snippets"))
 }
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -61,20 +62,23 @@ dependencies {
 	compile 'org.modelmapper:modelmapper:2.3.8'
 
 	// RestDocs - .adoc 파일에서 빌드, 스니펫 생성을 자동으로 구성되기 위해 추가
-	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:1.2.6.RELEASE'								// *.adoc 파일의 {snippets} 자동으로 설정
-	testCompile group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version: '2.0.2.RELEASE'		// Mock MVC 에 Rest Docs 추가
+	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'					// *.adoc 파일의 {snippets} 자동으로 설정
+	testCompile group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc'		// Mock MVC 에 Rest Docs 추가
 }
 
 test {
+	// snippets 디렉터리를 출력으로 추가하도록 테스트 작업 구성
+	outputs.dir snippetsDir
 	useJUnitPlatform()
 }
 
 // [2] Asciidoctor Task 설정
 asciidoctor {
-	// snippetsDir 경로로 스니펫 초기화
+	// snippets 디렉토리를 입력으로 구성
 	inputs.dir snippetsDir
 
-	// 문서가 작성되기 전에 테스트가 실행 [Asciidoctor Task 설정 ,test Task 이후에 실행될 수 있도록 Dependency 를 설정]
+	// 문서가 작성되기 전에 테스트가 실행 (Asciidoctor Task 설정 ,test Task 이후에 실행될 수 있도록 Dependency 를 설정)
+	// gradle build 시 test → asciidoctor 순으로 수행
 	dependsOn test
 }
 
@@ -88,21 +92,17 @@ asciidoctor.doLast {
 }
 
 task copyDocument(type: Copy) {
+	// gradle build 시 asciidoctor → bootJar 순으로 수행
 	dependsOn asciidoctor
+
+	// gradle build 시 ./build/asciidoc/html5/ 에 html 파일이 생깁
 	from file("build/asciidoc/html5")
-	// resources/static/docs 로 복사하여 서버가 돌아가고 있을때 /docs/index.html 로 접속하면 볼수 있음
+
+	// resources/static/docs 로 복사
+	// 서버가 켜져있다면, localhost:8021/docs/index.html 로 접속하면 볼 수 있음
 	into file("src/main/resources/static/docs")
 }
 
 build {
 	dependsOn copyDocument
 }
-
-//bootJar {
-//	archiveName = 'app.jar'
-//	dependsOn asciidoctor
-//	//실제 배포 시, BOOT-INF/classes가 classpath가 됩니다.
-//	from ("${asciidoctor.outputDir}/html5") {
-//		into "BOOT-INF/classes/static/docs"
-//	}
-//}
