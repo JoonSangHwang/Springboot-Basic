@@ -3,7 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 
-	// RestDocs - Asci Convert
+	// RestDocs - Asci Convert (플러그인)
 	id 'org.asciidoctor.convert' version '1.5.9.2'
 }
 
@@ -61,14 +61,15 @@ dependencies {
 	compile 'org.modelmapper:modelmapper:2.3.8'
 
 	// RestDocs - .adoc 파일에서 빌드, 스니펫 생성을 자동으로 구성되기 위해 추가
-	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:1.2.6.RELEASE'
-	testCompile group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version: '2.0.2.RELEASE'
+	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:1.2.6.RELEASE'								// *.adoc 파일의 {snippets} 자동으로 설정
+	testCompile group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version: '2.0.2.RELEASE'		// Mock MVC 에 Rest Docs 추가
 }
 
 test {
 	useJUnitPlatform()
 }
 
+// [2] Asciidoctor Task 설정
 asciidoctor {
 	// snippetsDir 경로로 스니펫 초기화
 	inputs.dir snippetsDir

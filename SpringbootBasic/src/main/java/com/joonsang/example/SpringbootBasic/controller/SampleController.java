@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,19 +52,24 @@ public class SampleController {
         return entityModel;
     }
 
-    @GetMapping("restDocsTest")
+    @GetMapping(value = "restDocsTest", produces = MediaTypes.HAL_JSON_VALUE)
     public ResponseEntity hello2(@RequestBody User user) {
-        User u = modelMapper.map(user, User.class);
 
-//        WebMvcLinkBuilder selfLinkBuilder = linkTo(User.class).slash(u.getId());
-//        URI createdUri = selfLinkBuilder.toUri();
+        WebMvcLinkBuilder selfLinkBuilder = linkTo(User.class).slash(user.getId());
+        URI createdUri = selfLinkBuilder.toUri();
 
 //        EntityModel<User> entityModel = new EntityModel(u);
 //        entityModel.add(linkTo(methodOn(User.class)).withSelfRel());
 //        entityModel.add(selfLinkBuilder.withRel("create-restDocsTest"));
 
+//        EntityModel<User> entityModel = new EntityModel(user);
+//        entityModel.add(linkTo(methodOn(SampleController.class)).withSelfRel());
 
-        return ResponseEntity.ok().body(u);
+        EntityModel<User> userResource = new EntityModel(user);
+//        userResource.add(selfLinkBuilder.withRel("update-event"));
+        userResource.add(linkTo(SampleController.class).withRel("restDocsTest"));
+//        userResource.add(linkTo(methodOn(SampleController.class).hello2(user)).withSelfRel());
+        return ResponseEntity.created(createdUri).body(userResource);
     }
 
     @Data
