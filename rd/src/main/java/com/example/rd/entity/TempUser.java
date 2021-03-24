@@ -1,9 +1,6 @@
 package com.example.rd.entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,7 +8,7 @@ import java.io.Serializable;
 @Entity
 @Setter
 @Getter
-//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TempUser implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +16,10 @@ public class TempUser implements Serializable {
     @Column private String username;
     @Column private String password;
 
-    public TempUser() {
-
+    @Builder
+    public TempUser(Long id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
     }
 }

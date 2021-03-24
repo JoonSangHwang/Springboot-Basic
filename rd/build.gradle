@@ -2,6 +2,9 @@ plugins {
 	id 'org.springframework.boot' version '2.4.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+
+	// RestDocs - Asci Convert (플러그인)
+	id 'org.asciidoctor.convert' version '1.5.9.2'
 }
 
 group = 'com.example'
@@ -18,17 +21,66 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	// Asciidoc 문서인 스니펫이 생성될 경로 지정
+	set('snippetsDir', file("build/generated-snippets"))
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'junit:junit:4.12'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// H2
 	runtimeOnly 'com.h2database:h2'
+
+	// RestDocs - .adoc 파일에서 빌드, 스니펫 생성을 자동으로 구성되기 위해 추가
+	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'					// *.adoc 파일의 {snippets} 자동으로 설정
+	testCompile group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc'		// Mock MVC 에 Rest Docs 추가
+
 }
 
 test {
+	// snippets 디렉터리를 출력으로 추가하도록 테스트 작업 구성
+	outputs.dir snippetsDir
 	useJUnitPlatform()
+}
+
+
+// [2] Asciidoctor Task 설정
+asciidoctor {
+	// snippets 디렉토리를 입력으로 구성
+	inputs.dir snippetsDir
+
+	// 문서가 작성되기 전에 테스트가 실행 (Asciidoctor Task 설정 ,test Task 이후에 실행될 수 있도록 Dependency 를 설정)
+	// gradle build 시 test → asciidoctor 순으로 수행
+	dependsOn test
+}
+
+asciidoctor.doFirst {
+	println "=====start asciidoctor"
+	//asciidoctor 실행전 기존에 생성된 API 문서 삭제
+	delete file('src/main/resources/static/docs')
+}
+asciidoctor.doLast {
+	println "=====finish asciidoctor"
+}
+
+task copyDocument(type: Copy) {
+	// gradle build 시 asciidoctor → bootJar 순으로 수행
+	dependsOn asciidoctor
+
+	// gradle build 시 ./build/asciidoc/html5/ 에 html 파일이 생깁
+	from file("build/asciidoc/html5")
+
+	// resources/static/docs 로 복사
+	// 서버가 켜져있다면, localhost:8021/docs/index.html 로 접속하면 볼 수 있음
+	into file("src/main/resources/static/docs")
+}
+
+build {
+	dependsOn copyDocument
 }
